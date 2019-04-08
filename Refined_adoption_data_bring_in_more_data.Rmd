@@ -66,7 +66,7 @@ The below code chuck is to create the postcode file with a only one set of postc
 
 ```{r list_poscodes_with coords, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
-postcodes_with_coord <- read.csv("../Australian_Post_Codes_Lat_Lon.csv")
+postcodes_with_coord <- read.csv("C:/Users/ouz001/book_chapter_data/Australian_Post_Codes_Lat_Lon.csv")
 
 postcodes_with_coord_dist <- distinct(postcodes_with_coord, postcode, .keep_all = TRUE)
 write.csv(postcodes_with_coord_dist, "postcodes_with_coord_dist.csv")
@@ -127,8 +127,8 @@ which I can use to map.
 ```{r join list_poscodes_with coords to PA study, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
 #bring in the PA study
-advisors_PA <- read.csv("../PA/PA_advisors_adoption.csv")
-advisors_PA1 <- read_excel("../PA/PA_data_rawish.xlsx")
+advisors_PA <- read.csv("C:/Users/ouz001/book_chapter_data/PA/PA_advisors_adoption.csv")
+advisors_PA1 <- read_excel("C:/Users/ouz001/book_chapter_data/PA/PA_data_rawish.xlsx")
 glimpse(advisors_PA)
 
 advisors_PA1 <- select(advisors_PA1, 
@@ -219,7 +219,7 @@ The below code chuck creates tables of number of farmers in PA study per GRDC re
 #read in advisor data with postcodes and zones
 
 
-XYadvisors_postcodes_join1 <- read.csv("../adoption_data/XYadvisors_postcodes_join.csv")
+XYadvisors_postcodes_join1 <- read.csv("C:/Users/ouz001/book_chapter_data/adoption_data/XYadvisors_postcodes_join.csv")
 XYadvisors_postcodes_join1 <- select(XYadvisors_postcodes_join1,
                                      farmer,
                                      postcode,
@@ -239,9 +239,9 @@ advisors_n_AGRO <- data.frame(count(XYadvisors_postcodes_join,AGROECOLOG))
 advisors_n_REGIONS <- data.frame(count(XYadvisors_postcodes_join,REGIONS))
 advisors_n_state <- data.frame(count(XYadvisors_postcodes_join,state))
 
-advisors_n_GRDC_Regio <- data.frame(count(XYadvisors_postcodes_join,GRDC_Regio))
-advisors_n_GRDC_region_ReZ <- data.frame(count(XYadvisors_postcodes_join,region_ReZ))
-glimpse(advisors_n_GRDC_Regio)
+GRDC_RegionQ3 <- data.frame(count(XYadvisors_postcodes_join,GRDC_RegionQ3))
+advisors_n_GRDC_region_ReZ <- data.frame(count(XYadvisors_postcodes_join,region_ReZoned))
+glimpse(advisors_n_REGIONS)
 
 #make the data frames neat and the names consistant (for joining)
 advisors_n_AGRO <- select(advisors_n_AGRO, zone = AGROECOLOG,
@@ -259,18 +259,20 @@ step1_advisors_n_zones <- rbind(advisors_n_AGRO,
                           advisors_n_state)
 
 #make the rest of the data frames neat and the names consistant (for joining)
-advisors_n_GRDC_Regio <- select(advisors_n_GRDC_Regio, zone = GRDC_Regio,
-                            number_of_farmers = n) %>% 
-                            mutate(grouping = "GRDC_Regio")
+#advisors_n_GRDC_GRDC_RegionQ3 <- select(advisors_n_GRDC_Regio, zone = GRDC_RegionQ3,
+#                            number_of_farmers = n) %>% 
+#                            mutate(grouping = "GRDC_RegionQ3")
 
-advisors_n_GRDC_region_ReZ <- select(advisors_n_GRDC_region_ReZ, zone = region_ReZ,
-                            number_of_farmers = n) %>% 
-                            mutate(grouping = "region_ReZ")
+#advisors_n_GRDC_region_ReZ <- select(advisors_n_GRDC_region_ReZ, zone = region_ReZoned,
+#                            number_of_farmers = n) %>% 
+#                            mutate(grouping = "region_ReZ")
+#glimpse(advisors_n_GRDC_Regio)
+#glimpse(advisors_n_GRDC_region_ReZ)
 #append these 2 count datasets
-step2_advisors_n_zones <- rbind(advisors_n_GRDC_Regio,
-                          advisors_n_GRDC_region_ReZ)
+#step2_advisors_n_zones <- rbind(advisors_n_GRDC_Regio,
+#                          advisors_n_GRDC_region_ReZ)
 #get the zone into a factors
-step2_advisors_n_zones <- mutate(step2_advisors_n_zones, zone = as.factor(zone))
+step2_advisors_n_zones <- mutate(step1_advisors_n_zones, zone = as.factor(zone))
 
 
 #append the data sets 
@@ -332,7 +334,7 @@ Use the joined PA data to generate adoption curves.
 
 #read in advisor data with postcodes and zones (this was done earlier step)
 
-XYadvisors_postcodes_join <- read.csv("../adoption_data/XYadvisors_postcodes_join.csv")
+XYadvisors_postcodes_join <- read.csv("C:/Users/ouz001/book_chapter_data/adoption_data/XYadvisors_postcodes_join.csv")
 
 #change the year from interger to factor
 XYadvisors_postcodes_join <- mutate(XYadvisors_postcodes_join, year_as_factor = as.factor(Agro_Yr_St))
@@ -581,12 +583,12 @@ adoption_curve_function_states_NOTILL_PA <- function(df, zone, numb_farmers) {
 ```
 
 ```{r adoption curve PA NO TILL study farmer per states, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
-#glimpse(XYadvisors_postcodes_join)
+glimpse(XYadvisors_postcodes_join)
 
-NSW <- adoption_curve_function_states_NOTILL_PA(XYadvisors_postcodes_join, "NSW", 105)
-SA <- adoption_curve_function_states_NOTILL_PA(XYadvisors_postcodes_join, "SA", 186)
-VIC <- adoption_curve_function_states_NOTILL_PA(XYadvisors_postcodes_join, "VIC", 150)
-WA <- adoption_curve_function_states_NOTILL_PA(XYadvisors_postcodes_join, "WA", 128)
+NSW <-  adoption_curve_function_states_NOTILL_PA(XYadvisors_postcodes_join, "NSW", 105)
+SA <-   adoption_curve_function_states_NOTILL_PA(XYadvisors_postcodes_join, "SA", 186)
+VIC <-  adoption_curve_function_states_NOTILL_PA(XYadvisors_postcodes_join, "VIC", 150)
+WA <-   adoption_curve_function_states_NOTILL_PA(XYadvisors_postcodes_join, "WA", 128)
 
 
 
