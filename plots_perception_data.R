@@ -157,18 +157,24 @@ glimpse(plot_perception_more_lessq1_5)
 
 plot_perception_more_lessq6_8_and1_5 <- rbind(plot_perception_more_lessq6_8,plot_perception_more_lessq1_5)
 glimpse(plot_perception_more_lessq1_5)
+
 ggplot(data = plot_perception_more_lessq6_8_and1_5, aes(ans_factors, y = perc, fill = ans_factors ))+
-  geom_bar(stat = "identity", width = .5)+  
+  geom_bar(stat = "identity", width = .8)+  
   facet_grid(REGIONS ~question_text, labeller = labeller(question_text = label_wrap_gen()))+
   scale_fill_manual(values = c("grey77", "grey50"))+
   theme_bw()+
   theme(legend.position = "bottom",
         axis.text.x  = element_text(angle=90, size = 8),
         axis.text.y  = element_text(size = 8),
-        strip.text = element_text(size = 8))+
+        strip.text = element_text(size = 8),
+        axis.ticks.x  = element_blank(),
+        axis.title.y = element_text(size = 8))+
   guides(fill = "none")+
   labs(x = "",
-       y = "percentage of farmers",
-       title = "Perception of no-till and stubble retention per region")
+       y = "percentage of farmers")#,
+       #title = "Perception of no-till and stubble retention per region")
+
+ggsave("plot_perception_more_lessq6_8_and1_5.png", width = 9.8, height = 5.6, units = "in")
+
 # I still have problem wrapping my text -- try the below
 #https://stackoverflow.com/questions/37174316/how-to-fit-long-text-into-ggplot2-facet-titles/37174810
