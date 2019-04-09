@@ -235,23 +235,24 @@ glimpse(XYadvisors_postcodes_join)
 
 
 #count the number of farmers in each group
-advisors_n_AGRO <- data.frame(count(XYadvisors_postcodes_join,AGROECOLOG))
-advisors_n_REGIONS <- data.frame(count(XYadvisors_postcodes_join,REGIONS))
-advisors_n_state <- data.frame(count(XYadvisors_postcodes_join,state))
+advisors_n_AGRO <- data.frame(count(XYadvisors_postcodes_join$AGROECOLOG))
+advisors_n_REGIONS <- data.frame(count(XYadvisors_postcodes_join$REGIONS))
+advisors_n_state <- data.frame(count(XYadvisors_postcodes_join$state))
 
-GRDC_RegionQ3 <- data.frame(count(XYadvisors_postcodes_join,GRDC_RegionQ3))
-advisors_n_GRDC_region_ReZ <- data.frame(count(XYadvisors_postcodes_join,region_ReZoned))
+GRDC_RegionQ3 <- data.frame(count(XYadvisors_postcodes_join$GRDC_RegionQ3))
+advisors_n_GRDC_region_ReZ <- data.frame(count(XYadvisors_postcodes_join$region_ReZoned))
 glimpse(advisors_n_REGIONS)
 
 #make the data frames neat and the names consistant (for joining)
-advisors_n_AGRO <- select(advisors_n_AGRO, zone = AGROECOLOG,
-                            number_of_farmers = n) %>% 
+glimpse(advisors_n_AGRO)
+advisors_n_AGRO <- select(advisors_n_AGRO, zone = x,
+                            number_of_farmers = freq) %>% 
                             mutate(grouping = "AGRO")
-advisors_n_REGIONS <- select(advisors_n_REGIONS, zone = REGIONS,
-                            number_of_farmers = n) %>% 
+advisors_n_REGIONS <- select(advisors_n_REGIONS, zone = x,
+                            number_of_farmers = freq) %>% 
                             mutate(grouping = "REGIONS")
-advisors_n_state <- select(advisors_n_state, zone = state,
-                            number_of_farmers = n) %>% 
+advisors_n_state <- select(advisors_n_state, zone = x,
+                            number_of_farmers = freq) %>% 
                             mutate(grouping = "state")
 #Append some of the data
 step1_advisors_n_zones <- rbind(advisors_n_AGRO,
@@ -335,10 +336,10 @@ Use the joined PA data to generate adoption curves.
 #read in advisor data with postcodes and zones (this was done earlier step)
 
 XYadvisors_postcodes_join <- read.csv("C:/Users/ouz001/book_chapter_data/adoption_data/XYadvisors_postcodes_join.csv")
-
+glimpse(XYadvisors_postcodes_join)
 #change the year from interger to factor
 XYadvisors_postcodes_join <- mutate(XYadvisors_postcodes_join, year_as_factor = as.factor(Agro_Yr_St))
-#glimpse(XYadvisors_postcodes_join)
+glimpse(XYadvisors_postcodes_join)
 
 #make a function to generate cummulative data
 #my df needs to have a clm called 'AGROECOLOG' and 'year_as_factor'
@@ -347,8 +348,8 @@ XYadvisors_postcodes_join <- mutate(XYadvisors_postcodes_join, year_as_factor = 
 
 adoption_curve_function <- function(df, zone, numb_farmers) {
   df_subset <- filter(df, AGROECOLOG == zone)
-  count_adoption_year <- count(df_subset,year_as_factor)
-  count_adoption_year <- select(count_adoption_year, year = year_as_factor, n)
+  count_adoption_year <- count(df_subset,df$year_as_factor)
+  count_adoption_year <- select(count_adoption_year, year = df$year_as_factor, n)
   years_of_study <- data.frame(year = 1950:2014, 
                                id = 1:65,
                                zone = zone)
@@ -376,7 +377,7 @@ adoption_curve_function <- function(df, zone, numb_farmers) {
 
 
 ```{r adoption curve PA study farmer per argozone etc, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
-#glimpse(XYadvisors_postcodes_join)
+glimpse(XYadvisors_postcodes_join)
 
 NSW_Central <- adoption_curve_function(XYadvisors_postcodes_join, "NSW Central", 24)
 NSW_Vic_Slopes <- adoption_curve_function(XYadvisors_postcodes_join, "NSW Vic Slopes", 81)
@@ -563,36 +564,36 @@ ggplot(advisors_adoption_states, aes(year, cumm_percent, colour=zone))+
 
 glimpse(XYadvisors_postcodes_join)
 
-adoption_curve_function_states_NOTILL_PA <- function(df, zone, numb_farmers) {
-  df_subset <- filter(df, state == zone)
-  count_adoption_year <- count(df_subset,NoTill_YrQ20_PA)
-  count_adoption_year <- select(count_adoption_year, year = NoTill_YrQ20_PA, n)
-  years_of_study <- data.frame(year = 1950:2014, 
-                               id = 1:65,
-                               zone = zone)
-  years_of_study <- mutate(years_of_study, year = as.factor(NoTill_YrQ20_PA))
-  adoption_df <- left_join(years_of_study, count_adoption_year, by= "year" )
-  adoption_df <- mutate(adoption_df, n = replace_na(adoption_df$n, 0))
-  adoption_df <- mutate(adoption_df, cummulative = cumsum(adoption_df$n))
-  adoption_df <- mutate(adoption_df, cumm_percent = (adoption_df$cummulative/numb_farmers)*100)
-  adoption_df$year <- as.double(adoption_df$year)
+#adoption_curve_function_states_NOTILL_PA <- function(df, zone, numb_farmers) {
+#  df_subset <- filter(df, state == zone)
+#  count_adoption_year <- count(df_subset,NoTill_YrQ20_PA)
+#  count_adoption_year <- select(count_adoption_year, year = NoTill_YrQ20_PA, n)
+#  years_of_study <- data.frame(year = 1950:2014, 
+#                               id = 1:65,
+#                               zone = zone)
+#  years_of_study <- mutate(years_of_study, year = as.factor(NoTill_YrQ20_PA))
+#  adoption_df <- left_join(years_of_study, count_adoption_year, by= "year" )
+#  adoption_df <- mutate(adoption_df, n = replace_na(adoption_df$n, 0))
+#  adoption_df <- mutate(adoption_df, cummulative = cumsum(adoption_df$n))
+#  adoption_df <- mutate(adoption_df, cumm_percent = (adoption_df$cummulative/numb_farmers)*100)
+#  adoption_df$year <- as.double(adoption_df$year)
   
   #return(df_subset)
-  return(adoption_df)
-}
+ # return(adoption_df)
+#}
 ```
 
 ```{r adoption curve PA NO TILL study farmer per states, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 glimpse(XYadvisors_postcodes_join)
 
-NSW <-  adoption_curve_function_states_NOTILL_PA(XYadvisors_postcodes_join, "NSW", 105)
-SA <-   adoption_curve_function_states_NOTILL_PA(XYadvisors_postcodes_join, "SA", 186)
-VIC <-  adoption_curve_function_states_NOTILL_PA(XYadvisors_postcodes_join, "VIC", 150)
-WA <-   adoption_curve_function_states_NOTILL_PA(XYadvisors_postcodes_join, "WA", 128)
+#NSW <-  adoption_curve_function_states_NOTILL_PA(XYadvisors_postcodes_join, "NSW", 105)
+#SA <-   adoption_curve_function_states_NOTILL_PA(XYadvisors_postcodes_join, "SA", 186)
+#VIC <-  adoption_curve_function_states_NOTILL_PA(XYadvisors_postcodes_join, "VIC", 150)
+#WA <-   adoption_curve_function_states_NOTILL_PA(XYadvisors_postcodes_join, "WA", 128)
 
 
 
-NOTill_PA_STATES_adoption_states <- rbind(NSW,SA,VIC,WA)
+#NOTill_PA_STATES_adoption_states <- rbind(NSW,SA,VIC,WA)
                                  
 
 
@@ -749,7 +750,7 @@ The below code chuck is to create the postcode file with a only one set of postc
 
 ```{r list_poscodes_with coords weeds, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
-postcodes_with_coord <- read.csv("../Australian_Post_Codes_Lat_Lon.csv")
+postcodes_with_coord <- read.csv("C:/Users/ouz001/book_chapter_data/Australian_Post_Codes_Lat_Lon.csv")
 
 postcodes_with_coord_dist <- distinct(postcodes_with_coord, postcode, .keep_all = TRUE)
 write.csv(postcodes_with_coord_dist, "postcodes_with_coord_dist.csv")
@@ -834,7 +835,7 @@ which I can use to map.
 ```{r join list_poscodes_with coords to weeds study, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
 #bring in the PA study
-NoTill <- read.csv("../Weeds/no_till_adoption_curves_R.csv")
+NoTill <- read.csv("C:/Users/ouz001/book_chapter_data/Weeds/no_till_adoption_curves_R.csv")
 
 glimpse(NoTill)
 NoTill_postcodes1 <- select(NoTill, farmer = KEY,
@@ -902,7 +903,7 @@ The below code chuck creates tables of number of farmers in weed study per GRDC 
 #read in weed data with postcodes and zones
 
 
-XYNoTill_postcodes_join <- read.csv("../adoption_data/XYNoTill_postcodes_join_GRDC_SLA.csv")
+XYNoTill_postcodes_join <- read.csv("C:/Users/ouz001/book_chapter_data/adoption_data/XYNoTill_postcodes_join_GRDC_SLA.csv")
 glimpse(XYNoTill_postcodes_join)
 
 
@@ -911,9 +912,9 @@ NoTill_n_AGRO <- data.frame(count(XYNoTill_postcodes_join,AGROECOLOG))
 NoTill_n_REGIONS <- data.frame(count(XYNoTill_postcodes_join,REGIONS))
 NoTill_n_state <- data.frame(count(XYNoTill_postcodes_join,state))
 #I dont have these cloumns I can make them but its a lot of work - with no values?
-#NoTill_n_GRDC_Regio <- data.frame(count(XYNoTill_postcodes_join,GRDC_Regio))
+NoTill_n_Q2aRegion <- data.frame(count(XYNoTill_postcodes_join,Q2aRegion))
 #NoTill_n_GRDC_region_ReZ <- data.frame(count(XYNoTill_postcodes_join,region_ReZ))
-glimpse(advisors_n_GRDC_Regio)
+glimpse(NoTill_n_Q2aRegion)
 
 #make the data frames neat and the names consistant (for joining)
 NoTill_n_AGRO <- select(NoTill_n_AGRO, zone = AGROECOLOG,
@@ -925,10 +926,14 @@ NoTill_n_REGIONS <- select(NoTill_n_REGIONS, zone = REGIONS,
 NoTill_n_state <- select(NoTill_n_state, zone = state,
                             number_of_farmers = n) %>% 
                             mutate(grouping = "state")
+NoTill_n_REGIONS_merge <- select(NoTill_n_Q2aRegion, zone = "Q2aRegion",
+                            number_of_farmers = n) %>% 
+                            mutate(grouping = "REGION_Merge")
 #Append some of the data
 NoTill_n_zones <- rbind(NoTill_n_AGRO,
                           NoTill_n_REGIONS,
-                          NoTill_n_state)
+                          NoTill_n_state,
+                          NoTill_n_REGIONS_merge)
 
 
 
@@ -1000,7 +1005,7 @@ Use the joined weed data to generate adoption curves.
 
 #read in advisor data with postcodes and zones (this was done earlier step)
 
-XYNoTill_postcodes_join <- read.csv("../adoption_data/XYNoTill_postcodes_join_GRDC_SLA.csv")
+XYNoTill_postcodes_join <- read.csv("C:/Users/ouz001/book_chapter_data/adoption_data/XYNoTill_postcodes_join_GRDC_SLA.csv")
 
 #change the year from interger to factor
 XYNoTill_postcodes_join <- mutate(XYNoTill_postcodes_join, year_as_factor = as.factor(Q15_year_f))
@@ -1072,6 +1077,7 @@ NoTill_adoption_Agro_NT <- rbind(Qld_Central_NT, NSW_NorthEast_Qld_SouthEast_NT,
 
 
 
+
 ```
 
 
@@ -1090,6 +1096,119 @@ ggsave("NoTill_adoption_Agro_NT.png")
 
 ```
 
+
+```{r adoption curve weeds study farmer per argozone MERGE etc, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+
+#merge tas and high rainfall
+glimpse(XYNoTill_postcodes_join)
+
+#This works but I dont think I need it XYNoTill_postcodes_join has Q2aRegion
+#XYNoTill_postcodes_join1 <- XYNoTill_postcodes_join %>% 
+#                                  mutate(
+#                                    test = case_when(
+#                                   AGROECOLOG ==  "Vic High Rainfall" ~  "Vic high rainfall and Tas",
+#                                   AGROECOLOG ==  "Tas Grain" ~  "Vic high rainfall and Tas",
+#                                   TRUE ~ as.character(AGROECOLOG)))
+
+#Bring in and modify the function
+
+adoption_curve_function_NoTill_merge <- function(df, zone, numb_farmers) {
+  df_subset <- filter(df, Q2aRegion == zone)
+  count_adoption_year <- count(df_subset,year_as_factor)
+  count_adoption_year <- select(count_adoption_year, year = year_as_factor, n)
+  years_of_study <- data.frame(year = 1950:2014, 
+                               id = 1:65,
+                               zone = zone)
+  years_of_study <- mutate(years_of_study, year = as.factor(year))
+  adoption_df <- left_join(years_of_study, count_adoption_year, by= "year" )
+  adoption_df <- mutate(adoption_df, n = replace_na(adoption_df$n, 0))
+  adoption_df <- mutate(adoption_df, cummulative = cumsum(adoption_df$n))
+  adoption_df <- mutate(adoption_df, cumm_percent = (adoption_df$cummulative/numb_farmers)*100)
+  adoption_df$year <- as.double(adoption_df$year)
+  
+  #return(df_subset)
+  return(adoption_df)
+}
+
+Qld_Central_NT_M <- adoption_curve_function_NoTill_merge(XYNoTill_postcodes_join, "QLD CENTRAL", 28)
+NSW_NorthEast_Qld_SouthEast_NT_M <- adoption_curve_function_NoTill_merge(XYNoTill_postcodes_join, "NSW NE - QLD SE", 45)
+
+NSW_NorthWest_Qld_SouthWest_NT_M <- adoption_curve_function_NoTill_merge(XYNoTill_postcodes_join, "NSW NW- QLD SW", 46)
+
+NSW_Central_NT_M     <- adoption_curve_function_NoTill_merge(XYNoTill_postcodes_join, "NSW CENTRAL", 49)
+NSW_Vic_Slopes_NT_M <- adoption_curve_function_NoTill_merge(XYNoTill_postcodes_join, "NSW VIC SLOPES", 52)
+
+SA_Midnorth_Lower_Yorke_Eyre_NT_M <- adoption_curve_function_NoTill_merge(XYNoTill_postcodes_join, "SA MIDNORTH - LOWER YORKE EYRE", 51)
+SA_Vic_Bordertown_Wimmera_NT_M <- adoption_curve_function_NoTill_merge(XYNoTill_postcodes_join, "SA VIC BORDERTOWN – WIMMERA", 50)
+SA_Vic_Mallee_NT_M <- adoption_curve_function_NoTill_merge(XYNoTill_postcodes_join, "SA VIC MALLEE", 52)
+
+Vic_High_Rainfall_TAS_NT_M <- adoption_curve_function_NoTill_merge(XYNoTill_postcodes_join, "TAS GRAIN & VIC HIGH RAINFALL", 51)
+
+
+WA_Central_NT_M <- adoption_curve_function_NoTill_merge(XYNoTill_postcodes_join, "WA CENTRAL", 45)
+WA_Eastern_NT_M <- adoption_curve_function_NoTill_merge(XYNoTill_postcodes_join, "WA EASTERN", 47)
+WA_Mallee_Sandplain_NT_M <- adoption_curve_function_NoTill_merge(XYNoTill_postcodes_join, "WA MALLEE AND SANDPLAIN", 46)
+WA_Northern_NT_M <- adoption_curve_function_NoTill_merge(XYNoTill_postcodes_join, "WA NORTHERN", 40)
+
+NoTill_adoption_Agro_NT_merge <- rbind(Qld_Central_NT_M, 
+                                       NSW_NorthEast_Qld_SouthEast_NT_M, 
+                                       NSW_NorthWest_Qld_SouthWest_NT_M,
+                                       NSW_Central_NT,
+                          NSW_Vic_Slopes_NT_M,
+                          SA_Midnorth_Lower_Yorke_Eyre_NT_M,
+                          SA_Vic_Bordertown_Wimmera_NT_M,
+                          SA_Vic_Mallee_NT_M,
+                          Vic_High_Rainfall_TAS_NT_M,
+                          WA_Central_NT_M,
+                          WA_Eastern_NT_M,
+                          WA_Mallee_Sandplain_NT_M,
+                          WA_Northern_NT_M) 
+
+
+
+
+
+```
+
+
+```{r plot NoTill Agro merge, echo=FALSE}
+Q2aRegion <- c(
+`QLD CENTRAL` = "Qld Central",
+`NSW NE - QLD SE` = "NSW NE/Qld SE",
+`NSW NW- QLD SW` = "NSW NW/Qld SW",
+`NSW CENTRAL` = "NSW Central",
+`NSW VIC SLOPES` = "NSW VIC Slopes",
+`SA MIDNORTH - LOWER YORKE EYRE` = "SA Midnorth - Lower Yorke Eyre",
+`SA VIC BORDERTOWN – WIMMERA` = "SA VIC Bordertown - Wimmera",
+`SA VIC MALLEE` = "SA VIC Mallee",
+`TAS GRAIN & VIC HIGH RAINFALL` = "VIC High Rainfall and TAS Grain",
+`WA CENTRAL` = "WA Central",
+`WA EASTERN` = "WA Eastern",
+`WA MALLEE AND SANDPLAIN` = "WA Sandplain - Mallee",
+`WA NORTHERN` = "WA Northern")
+
+glimpse(Q2aRegion)
+print(NoTill_n_zones[26,1])
+
+ggplot(NoTill_adoption_Agro_NT_merge, aes(year, cumm_percent, group=zone))+
+  geom_line()+
+  theme_classic()+
+  theme(legend.position = "bottom",
+        strip.text = element_text(size = 6),
+        axis.text.y = element_text( size = 8),
+        axis.text.x = element_text( size = 8))+
+  xlim(1980, 2015)+
+  scale_y_continuous(breaks=c(0, 50, 100))+
+  facet_wrap(.~zone, labeller = labeller(zone = label_wrap_gen()))+
+  #facet_wrap(.~zone, labeller = labeller(zone = Q2aRegion, label_wrap_gen()))+
+  labs(x = "",
+       y = "Percenatge of farmers in year first trying no-till") #,
+       #title = "Adoption of no till use per AgroEcological")
+
+
+ggsave("NoTill_adoption_Agro_NT_merge.png", width = 9.8, height = 5.6, units = "in")
+
+```
 
 ```{r adoption curve weed study farmer per region function, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
@@ -1231,7 +1350,30 @@ ggsave("NoTill_adoption_Region.png")
 
 ```
 
+```{r plot NoTill region overlayed with national, echo=FALSE}
 
+glimpse(NoTill_adoption_Region_NT)
+glimpse(National_NT)
+National_NT_for_graph <- National_NT %>% 
+                          mutate(zone = "national")
+glimpse(National_NT_for_graph)
+National_Region_NT_for_graph <- rbind(National_NT_for_graph,NoTill_adoption_Region_NT)
+glimpse(National_Region_NT_for_graph)
+
+ggplot(National_Region_NT_for_graph, aes(year, cumm_percent, group = zone))+
+  geom_smooth(data = subset(National_Region_NT_for_graph, zone == "national"),se=FALSE, colour = "black")+
+  geom_line(data = subset(National_Region_NT_for_graph, zone != "national"), aes(linetype=zone) )+
+  scale_linetype_manual(values=c("twodash", "dotted", "longdash"))+
+  theme_classic()+
+  theme(legend.position = "bottom")+
+  #theme(legend.position = "")+
+   xlim(1980, 2015)+
+  labs(x = "",
+       y = "Percenatge of farmers in year first trying no-till" )
+       #title = "Adoption of no till use per Region")
+ggsave("NoTill_adoption_Region_with_national.png", width = 9.8, height = 5.6, units = "in")
+
+```
 
 
 
@@ -1473,7 +1615,7 @@ South = 46 growers greater than zero /305 =15%
 
 ```{r Cultivation prior to seeding state, echo=FALSE}
 #bring in the cultivation data with zone info merged 
-cultivation_prior_seeding <- read.csv("../Weeds/cultivation.csv")
+cultivation_prior_seeding <- read.csv("C:/Users/ouz001/book_chapter_data/Weeds/cultivation.csv")
 
 #glimpse(cultivation_prior_seeding)
 
@@ -3010,7 +3152,7 @@ windrow_use_REGIONS$percentage <- round(windrow_use_REGIONS$percentage,0)
 
 ```{r adoption of narrow windrow buning, echo=FALSE}
 #bring in the windrow burning data with zone info merged 
-windrow_burn_adoption <- read.csv("../Weeds/Raw_data_Weeds_with_postcodes_windrow_burn.csv")
+windrow_burn_adoption <- read.csv("C:/Users/ouz001/book_chapter_data/Weeds/Raw_data_Weeds_with_postcodes_windrow_burn.csv")
 
 
 
@@ -3104,7 +3246,7 @@ ggsave("windrow burning_adoption_Agro.png")
 
 ```{r adoption of narrow windrow buning by, eval=FALSE, include=FALSE}
 #bring in the windrow burning data with zone info merged 
-windrow_burn_adoption <- read.csv("../Weeds/Raw_data_Weeds_with_postcodes_windrow_burn.csv")
+windrow_burn_adoption <- read.csv("C:/Users/ouz001/book_chapter_data/Weeds/Raw_data_Weeds_with_postcodes_windrow_burn.csv")
 
 
 #make a function to generate cummulative data
@@ -4106,7 +4248,7 @@ Q27 - do you pay a consultant advisor or argo for cropping advice YES =1
 
 
 ```{r PA survey - NO Till Perception questions for Q26, echo=FALSE}
-No_Till_perception <- read_excel("../Weeds/Raw_data_Weeds_with_postcodes.xlsx", sheet= "GRDC_Weed_in_Crops_rawish")
+No_Till_perception <- read_excel("C:/Users/ouz001/book_chapter_data/Weeds/Raw_data_Weeds_with_postcodes.xlsx", sheet= "GRDC_Weed_in_Crops_rawish")
 No_Till_perception <- select(No_Till_perception,farmer,
                              AGROECOLOG,
                              REGIONS,
