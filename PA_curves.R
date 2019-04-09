@@ -104,16 +104,16 @@ PA_survey_zone <- mutate(PA_survey_zone,
 
 fun_test2 <- function(df, zone, numb_farmers) {
   df_subset <- filter(df, state == zone)
-  count_adoption_year <- count(df_subset,Yr_Agro)
-  count_adoption_year <- select(count_adoption_year, year = Yr_Agro, n) #this clm year is a factor
+  count_adoption_year <- count(df_subset,"Yr_Agro")
+  count_adoption_year <- select(count_adoption_year, year = Yr_Agro, freq) #this clm year is a factor
   years_of_study <- data.frame(year = 1950:2014, #this is int 
                                id = 1:65,
                                zone = zone)
   years_of_study <- mutate(years_of_study, year = as.factor(year))
   
   adoption_df <- left_join(years_of_study, count_adoption_year, by= "year" )
-  adoption_df1 <- mutate(adoption_df, n = replace_na(adoption_df$n, 0))
-  adoption_df2 <- mutate(adoption_df1, cummulative = cumsum(adoption_df1$n))
+  adoption_df1 <- mutate(adoption_df, freq = replace_na(adoption_df$freq, 0))
+  adoption_df2 <- mutate(adoption_df1, cummulative = cumsum(adoption_df1$freq))
   adoption_df3 <- mutate(adoption_df2, cumm_percent = (adoption_df2$cummulative/numb_farmers)*100)
 }
 
@@ -151,16 +151,16 @@ ggplot(PA_Agro_state, aes(year, cumm_percent))+
 
 fun_test3 <- function(df, zone, numb_farmers) {
   df_subset <- filter(df, state == zone)
-  count_adoption_year <- count(df_subset,Yr_No_Till_PA)
-  count_adoption_year <- select(count_adoption_year, year = Yr_No_Till_PA, n) #this clm year is a factor
+  count_adoption_year <- count(df_subset,"Yr_No_Till_PA")
+  count_adoption_year <- select(count_adoption_year, year = Yr_No_Till_PA, freq) #this clm year is a factor
   years_of_study <- data.frame(year = 1950:2014, #this is int 
                                id = 1:65,
                                zone = zone)
   years_of_study <- mutate(years_of_study, year = as.factor(year))
   
   adoption_df <- left_join(years_of_study, count_adoption_year, by= "year" )
-  adoption_df1 <- mutate(adoption_df, n = replace_na(adoption_df$n, 0))
-  adoption_df2 <- mutate(adoption_df1, cummulative = cumsum(adoption_df1$n))
+  adoption_df1 <- mutate(adoption_df, freq = replace_na(adoption_df$freq, 0))
+  adoption_df2 <- mutate(adoption_df1, cummulative = cumsum(adoption_df1$freq))
   adoption_df3 <- mutate(adoption_df2, cumm_percent = (adoption_df2$cummulative/numb_farmers)*100)
 }
 
@@ -217,15 +217,15 @@ glimpse(XYNoTill_postcodes_join)
 
 adoption_curve_function_NoTill_S <- function(df, zone, numb_farmers) {
   df_subset <- filter(df, state == zone)
-  count_adoption_year <- count(df_subset,year_as_factor)
-  count_adoption_year <- select(count_adoption_year, year = year_as_factor, n)
+  count_adoption_year <- count(df_subset,"year_as_factor")
+  count_adoption_year <- select(count_adoption_year, year = year_as_factor, freq)
   years_of_study <- data.frame(year = 1950:2014, 
                                id = 1:65,
                                zone = zone)
   years_of_study <- mutate(years_of_study, year = as.factor(year))
   adoption_df <- left_join(years_of_study, count_adoption_year, by= "year" )
-  adoption_df <- mutate(adoption_df, n = replace_na(adoption_df$n, 0))
-  adoption_df <- mutate(adoption_df, cummulative = cumsum(adoption_df$n))
+  adoption_df <- mutate(adoption_df, freq = replace_na(adoption_df$freq, 0))
+  adoption_df <- mutate(adoption_df, cummulative = cumsum(adoption_df$freq))
   adoption_df <- mutate(adoption_df, cumm_percent = (adoption_df$cummulative/numb_farmers)*100)
   adoption_df$year <- as.double(adoption_df$year)
   
@@ -266,16 +266,16 @@ glimpse(PA_survey_zone)
 ###PA Autosteer  Yr_AutoSteer_PA
 fun_test4 <- function(df, zone, numb_farmers) {
   df_subset <- filter(df, state == zone)
-  count_adoption_year <- count(df_subset,Yr_AutoSteer_PA)
-  count_adoption_year <- select(count_adoption_year, year = Yr_AutoSteer_PA, n) #this clm year is a factor
+  count_adoption_year <- count(df_subset,"Yr_AutoSteer_PA")
+  count_adoption_year <- select(count_adoption_year, year = Yr_AutoSteer_PA, freq) #this clm year is a factor
   years_of_study <- data.frame(year = 1950:2014, #this is int 
                                id = 1:65,
                                zone = zone)
   years_of_study <- mutate(years_of_study, year = as.factor(year))
   
   adoption_df <- left_join(years_of_study, count_adoption_year, by= "year" )
-  adoption_df1 <- mutate(adoption_df, n = replace_na(adoption_df$n, 0))
-  adoption_df2 <- mutate(adoption_df1, cummulative = cumsum(adoption_df1$n))
+  adoption_df1 <- mutate(adoption_df, freq = replace_na(adoption_df$freq, 0))
+  adoption_df2 <- mutate(adoption_df1, cummulative = cumsum(adoption_df1$freq))
   adoption_df3 <- mutate(adoption_df2, cumm_percent = (adoption_df2$cummulative/numb_farmers)*100)
 }
 
@@ -333,16 +333,16 @@ ggsave("Yr_AutoSteer_PA_Agro.png", width = 9.8, height = 5.6, units = "in")
 glimpse(PA_survey_zone)
 fun_test5 <- function(df, zone, numb_farmers) {
   df_subset <- filter(df, state == zone)
-  count_adoption_year <- count(df_subset,Yr_yld_map_PA)
-  count_adoption_year <- select(count_adoption_year, year = Yr_yld_map_PA, n) #this clm year is a factor
+  count_adoption_year <- count(df_subset,"Yr_yld_map_PA")
+  count_adoption_year <- select(count_adoption_year, year = Yr_yld_map_PA, freq) #this clm year is a factor
   years_of_study <- data.frame(year = 1950:2014, #this is int 
                                id = 1:65,
                                zone = zone)
   years_of_study <- mutate(years_of_study, year = as.factor(year))
   
   adoption_df <- left_join(years_of_study, count_adoption_year, by= "year" )
-  adoption_df1 <- mutate(adoption_df, n = replace_na(adoption_df$n, 0))
-  adoption_df2 <- mutate(adoption_df1, cummulative = cumsum(adoption_df1$n))
+  adoption_df1 <- mutate(adoption_df, freq = replace_na(adoption_df$freq, 0))
+  adoption_df2 <- mutate(adoption_df1, cummulative = cumsum(adoption_df1$freq))
   adoption_df3 <- mutate(adoption_df2, cumm_percent = (adoption_df2$cummulative/numb_farmers)*100)
 }
 
@@ -394,16 +394,16 @@ ggsave("Yr_yld_map_PA_Agro_state.png", width = 9.8, height = 5.6, units = "in")
 glimpse(PA_survey_zone)
 fun_test6 <- function(df, zone, numb_farmers) {
   df_subset <- filter(df, state == zone)
-  count_adoption_year <- count(df_subset,Yr_soil_testing_PA)
-  count_adoption_year <- select(count_adoption_year, year = Yr_soil_testing_PA, n) #this clm year is a factor
+  count_adoption_year <- count(df_subset,"Yr_soil_testing_PA")
+  count_adoption_year <- select(count_adoption_year, year = Yr_soil_testing_PA, freq) #this clm year is a factor
   years_of_study <- data.frame(year = 1950:2014, #this is int 
                                id = 1:65,
                                zone = zone)
   years_of_study <- mutate(years_of_study, year = as.factor(year))
   
   adoption_df <- left_join(years_of_study, count_adoption_year, by= "year" )
-  adoption_df1 <- mutate(adoption_df, n = replace_na(adoption_df$n, 0))
-  adoption_df2 <- mutate(adoption_df1, cummulative = cumsum(adoption_df1$n))
+  adoption_df1 <- mutate(adoption_df, freq = replace_na(adoption_df$freq, 0))
+  adoption_df2 <- mutate(adoption_df1, cummulative = cumsum(adoption_df1$freq))
   adoption_df3 <- mutate(adoption_df2, cumm_percent = (adoption_df2$cummulative/numb_farmers)*100)
 }
 
@@ -488,15 +488,15 @@ glimpse(crop_top1)
 
 adoption_curve_fun7 <- function(df, zone, numb_farmers) {
   df_subset <- filter(df, state == zone)
-  count_adoption_year <- count(df_subset,Yr_crop_top)
-  count_adoption_year <- select(count_adoption_year, year = Yr_crop_top, n)
+  count_adoption_year <- count(df_subset,"Yr_crop_top")
+  count_adoption_year <- select(count_adoption_year, year = Yr_crop_top, freq)
   years_of_study <- data.frame(year = 1950:2014, 
                                id = 1:65,
                                zone = zone)
   years_of_study <- mutate(years_of_study, year = as.factor(year))
   adoption_df <- left_join(years_of_study, count_adoption_year, by= "year" )
-  adoption_df <- mutate(adoption_df, n = replace_na(adoption_df$n, 0))
-  adoption_df <- mutate(adoption_df, cummulative = cumsum(adoption_df$n))
+  adoption_df <- mutate(adoption_df, freq = replace_na(adoption_df$freq, 0))
+  adoption_df <- mutate(adoption_df, cummulative = cumsum(adoption_df$freq))
   adoption_df <- mutate(adoption_df, cumm_percent = (adoption_df$cummulative/numb_farmers)*100)
   adoption_df$year <- as.double(adoption_df$year)
   
@@ -581,6 +581,8 @@ ggplot(Agro_noTill_soil_test_autoSteer_crop_top, aes(year, cumm_percent, group =
        y = "Percentage of farmers")
 ggsave("Agro_noTill_soil_test_autoSteer_crop_top.png", width = 9.8, height = 5.6, units = "in")
 
+
+
 #########make a data set that has Advisor (PA study), no till, soil test, and auto steer ######
 glimpse(PA_Agro_state)
 glimpse(NoTill_adoption_state_NT_weeds)
@@ -609,3 +611,260 @@ ggplot(Agro_noTill_soil_test_autoSteer, aes(year, cumm_percent, group = adoption
 ggsave("Agro_noTill_soil_test_autoSteer.png", width = 9.8, height = 5.6, units = "in")
 
 
+
+
+#######                Narrow windrow buring                   ###########
+
+XYNoTill_postcodes_join <- read.csv("C:/Users/ouz001/book_chapter_data/adoption_data/XYNoTill_postcodes_join_GRDC_SLA.csv") %>% 
+  select(farmer,
+         postcode,
+         study,
+         AGROECOLOG,
+         REGIONS,
+         state)
+glimpse(XYNoTill_postcodes_join)
+narrow_windrow_burn <- read_excel("C:/Users/ouz001/book_chapter_data/Weeds/Raw_data_Weeds_with_postcodes.xlsx")%>% 
+  select(KEY,
+         Q21c1 )
+
+narrow_windrow_burn <- mutate(narrow_windrow_burn, Yr_narrow_windrow_burn = if_else(Q21c1  ==-99, 0, Q21c1)) 
+glimpse(narrow_windrow_burn)
+narrow_windrow_burn <- mutate(narrow_windrow_burn, Yr_narrow_windrow_burn = as.factor(Yr_narrow_windrow_burn),
+                   farmer = KEY)
+
+#join the data togther to get clm for narrow windrow and for states etc..
+narrow_windrow_burn1 <- left_join(narrow_windrow_burn, XYNoTill_postcodes_join, by = "farmer")
+glimpse(narrow_windrow_burn1)
+
+
+adoption_curve_fun7 <- function(df, zone, numb_farmers) {
+  df_subset <- filter(df, state == zone)
+  count_adoption_year <- count(df_subset,"Yr_narrow_windrow_burn")
+  count_adoption_year <- select(count_adoption_year, year = Yr_narrow_windrow_burn, freq)
+  years_of_study <- data.frame(year = 1950:2014, 
+                               id = 1:65,
+                               zone = zone)
+  years_of_study <- mutate(years_of_study, year = as.factor(year))
+  adoption_df <- left_join(years_of_study, count_adoption_year, by= "year" )
+  adoption_df <- mutate(adoption_df, freq = replace_na(adoption_df$freq, 0))
+  adoption_df <- mutate(adoption_df, cummulative = cumsum(adoption_df$freq))
+  adoption_df <- mutate(adoption_df, cumm_percent = (adoption_df$cummulative/numb_farmers)*100)
+  adoption_df$year <- as.double(adoption_df$year)
+  
+  #return(df_subset)
+  return(adoption_df)
+}
+QLD_narrow_burn <- adoption_curve_fun7(narrow_windrow_burn1, "QLD", 59)
+NSW_narrow_burn <- adoption_curve_fun7(narrow_windrow_burn1, "NSW", 153)
+SA_narrow_burn <- adoption_curve_fun7(narrow_windrow_burn1, "SA", 65)
+VIC_narrow_burn <- adoption_curve_fun7(narrow_windrow_burn1, "VIC", 141)
+WA_narrow_burn <- adoption_curve_fun7(narrow_windrow_burn1, "WA", 179)
+
+narrow_burn_states <- rbind(QLD_narrow_burn, NSW_narrow_burn, SA_narrow_burn,VIC_narrow_burn, WA_narrow_burn ) 
+narrow_burn_states <- mutate(narrow_burn_states, adoption = "narrow windrow burning")
+
+
+####### Narrow windrow buring, crop top and advisor(PA) by states #######
+
+glimpse(PA_Agro_state)
+glimpse(narrow_burn_states)
+
+
+Agro_advisor_crop_top_narrow_burn <- rbind(PA_Agro_state, 
+                                           narrow_burn_states,
+                                           croptop_states)
+Agro_advisor_crop_top_narrow_burn <- filter(Agro_advisor_crop_top_narrow_burn, zone!= "QLD")
+
+ggplot(Agro_advisor_crop_top_narrow_burn , aes(year, cumm_percent, group = adoption))+
+  geom_line(aes(linetype=adoption))+
+  #scale_linetype_manual(values=c("solid", "dashed", "dotted" ))+
+  theme_classic()+
+  theme(legend.position = "bottom")+
+  theme(legend.position = "")+
+  xlim(1980, 2015)+
+  ylim(0,100)+
+  facet_wrap(.~zone)+
+  labs(x = "Years",
+       y = "Percentage of farmers")
+
+ggsave("xxAgro_advisor_crop_top_narrow_burn.png", width = 9.8, height = 5.6, units = "in")
+
+glimpse(Agro_advisor_crop_top_narrow_burn)
+Agro_advisor_crop_top_narrow_burn_not_NSW_VIC <- filter(Agro_advisor_crop_top_narrow_burn, zone == "SA" | zone == "WA")
+glimpse(Agro_advisor_crop_top_narrow_burn_not_NSW_VIC)
+
+ggplot(Agro_advisor_crop_top_narrow_burn_not_NSW_VIC , aes(year, cumm_percent, group = adoption))+
+  geom_line(aes(linetype=adoption))+
+  #scale_linetype_manual(values=c("solid", "dashed", "dotted" ))+
+  theme_classic()+
+  theme(legend.position = "bottom")+
+  theme(legend.position = "")+
+  xlim(1980, 2015)+
+  ylim(0,100)+
+  facet_wrap(.~zone)+
+  labs(x = "Years",
+       y = "Percentage of farmers")
+
+ggsave("xxAgro_advisor_crop_top_narrow_burn_SA_WA.png", width = 9.8, height = 5.6, units = "in")
+
+
+
+
+###########    Burn advisors and crop top by regions ########
+###BURN
+XYNoTill_postcodes_join <- read.csv("C:/Users/ouz001/book_chapter_data/adoption_data/XYNoTill_postcodes_join_GRDC_SLA.csv") %>% 
+  select(farmer,
+         postcode,
+         study,
+         AGROECOLOG,
+         REGIONS,
+         state)
+glimpse(XYNoTill_postcodes_join)
+narrow_windrow_burn <- read_excel("C:/Users/ouz001/book_chapter_data/Weeds/Raw_data_Weeds_with_postcodes.xlsx")%>% 
+  select(KEY,
+         Q21c1 )
+
+narrow_windrow_burn <- mutate(narrow_windrow_burn, Yr_narrow_windrow_burn = if_else(Q21c1  ==-99, 0, Q21c1)) 
+glimpse(narrow_windrow_burn)
+narrow_windrow_burn <- mutate(narrow_windrow_burn, Yr_narrow_windrow_burn = as.factor(Yr_narrow_windrow_burn),
+                              farmer = KEY)
+
+#join the data togther to get clm for narrow windrow and for states etc..
+narrow_windrow_burn1 <- left_join(narrow_windrow_burn, XYNoTill_postcodes_join, by = "farmer")
+glimpse(narrow_windrow_burn1)
+count(narrow_windrow_burn1,"REGIONS")
+
+adoption_curve_fun7 <- function(df, zone, numb_farmers) {
+  df_subset <- filter(df, REGIONS == zone)
+  count_adoption_year <- count(df_subset,"Yr_narrow_windrow_burn")
+  count_adoption_year <- select(count_adoption_year, year = Yr_narrow_windrow_burn, freq)
+  years_of_study <- data.frame(year = 1950:2014, 
+                               id = 1:65,
+                               zone = zone)
+  years_of_study <- mutate(years_of_study, year = as.factor(year))
+  adoption_df <- left_join(years_of_study, count_adoption_year, by= "year" )
+  adoption_df <- mutate(adoption_df, freq = replace_na(adoption_df$freq, 0))
+  adoption_df <- mutate(adoption_df, cummulative = cumsum(adoption_df$freq))
+  adoption_df <- mutate(adoption_df, cumm_percent = (adoption_df$cummulative/numb_farmers)*100)
+  adoption_df$year <- as.double(adoption_df$year)
+  
+  #return(df_subset)
+  return(adoption_df)
+}
+glimpse(narrow_windrow_burn1)
+
+ 
+Northern_narrow_burn <- adoption_curve_fun7(narrow_windrow_burn1, "Northern", 118)
+Southern_narrow_burn <- adoption_curve_fun7(narrow_windrow_burn1, "Southern", 298)
+Western_narrow_burn <- adoption_curve_fun7(narrow_windrow_burn1, "Western", 172)
+
+
+
+narrow_burn_Regions <- rbind(Northern_narrow_burn, Southern_narrow_burn, Western_narrow_burn ) 
+narrow_burn_Regions <- mutate(narrow_burn_Regions, adoption = "narrow windrow burning")
+
+
+
+###crop
+XYNoTill_postcodes_join <- read.csv("C:/Users/ouz001/book_chapter_data/adoption_data/XYNoTill_postcodes_join_GRDC_SLA.csv") %>% 
+  select(farmer,
+         postcode,
+         study,
+         AGROECOLOG,
+         REGIONS,
+         state)
+glimpse(XYNoTill_postcodes_join)
+crop_top <- read_excel("C:/Users/ouz001/book_chapter_data/Weeds/Raw_data_Weeds_with_postcodes.xlsx")%>% 
+  select(KEY,
+         Q20l1)
+
+crop_top <- mutate(crop_top, Yr_crop_top = if_else(Q20l1  ==-99, 0, Q20l1)) 
+glimpse(crop_top)
+crop_top <- mutate(crop_top, Yr_crop_top = as.factor(Yr_crop_top),
+                   farmer = KEY)
+
+#join the data togther to get clm for crop topping and for states etc..
+crop_top1 <- left_join(crop_top, XYNoTill_postcodes_join, by = "farmer")
+glimpse(crop_top1)
+
+
+adoption_curve_fun7 <- function(df, zone, numb_farmers) {
+  df_subset <- filter(df, REGIONS == zone)
+  count_adoption_year <- count(df_subset,"Yr_crop_top")
+  count_adoption_year <- select(count_adoption_year, year = Yr_crop_top, freq)
+  years_of_study <- data.frame(year = 1950:2014, 
+                               id = 1:65,
+                               zone = zone)
+  years_of_study <- mutate(years_of_study, year = as.factor(year))
+  adoption_df <- left_join(years_of_study, count_adoption_year, by= "year" )
+  adoption_df <- mutate(adoption_df, freq = replace_na(adoption_df$freq, 0))
+  adoption_df <- mutate(adoption_df, cummulative = cumsum(adoption_df$freq))
+  adoption_df <- mutate(adoption_df, cumm_percent = (adoption_df$cummulative/numb_farmers)*100)
+  adoption_df$year <- as.double(adoption_df$year)
+  
+  #return(df_subset)
+  return(adoption_df)
+}
+
+Northern_croptop <- adoption_curve_fun7(crop_top1, "Northern", 118)
+Southern_croptop <- adoption_curve_fun7(crop_top1, "Southern", 298)
+Western_croptop <- adoption_curve_fun7(crop_top1, "Western", 172)
+
+
+
+croptop_Region <- rbind(Northern_croptop, Southern_croptop, Western_croptop ) 
+croptop_Region <- mutate(croptop_Region, adoption = "crop top")
+
+#### ADVISOR
+glimpse(PA_survey_zone)
+count(PA_survey_zone,"REGIONS")
+fun_test2 <- function(df, zone, numb_farmers) {
+  df_subset <- filter(df, REGIONS == zone)
+  count_adoption_year <- count(df_subset,"Yr_Agro")
+  count_adoption_year <- select(count_adoption_year, year = Yr_Agro, freq) #this clm year is a factor
+  years_of_study <- data.frame(year = 1950:2014, #this is int 
+                               id = 1:65,
+                               zone = zone)
+  years_of_study <- mutate(years_of_study, year = as.factor(year))
+  
+  adoption_df <- left_join(years_of_study, count_adoption_year, by= "year" )
+  adoption_df1 <- mutate(adoption_df, freq = replace_na(adoption_df$freq, 0))
+  adoption_df2 <- mutate(adoption_df1, cummulative = cumsum(adoption_df1$freq))
+  adoption_df3 <- mutate(adoption_df2, cumm_percent = (adoption_df2$cummulative/numb_farmers)*100)
+}
+
+###PA Advisors BY Regions######
+
+
+Southern_advisor <- fun_test2(PA_survey_zone, "Southern", 441)
+Western_advisor <- fun_test2(PA_survey_zone, "Western", 128)
+
+advisor_region <- rbind(Southern_advisor, Western_advisor ) 
+advisor_region <- mutate(advisor_region, adoption = "advisor",
+                         year = as.double(year))
+
+glimpse(advisor_region)
+
+
+glimpse(narrow_burn_Regions)
+glimpse(croptop_Region)
+glimpse(advisor_region)
+
+advisor_narrow_crop_region <- rbind(advisor_region,narrow_burn_Regions, croptop_Region  )
+glimpse(advisor_narrow_crop_region)
+advisor_narrow_crop_region_St_West <- filter(advisor_narrow_crop_region,zone != "Northern" )
+glimpse(advisor_narrow_crop_region_St_West)
+
+ggplot(advisor_narrow_crop_region_St_West , aes(year, cumm_percent, group = adoption))+
+  geom_line(aes(linetype=adoption))+
+  #scale_linetype_manual(values=c("solid", "dashed", "dotted" ))+
+  theme_classic()+
+  #theme(legend.position = "bottom")+
+  theme(legend.position = "")+
+  xlim(1980, 2015)+
+  ylim(0,100)+
+  facet_wrap(.~zone)+
+  labs(x = "Years",
+       y = "Percentage of farmers")
+
+ggsave("xxAgro_advisor_crop_top_narrow_burn_Sth_West.png", width = 9.8, height = 5.6, units = "in")
